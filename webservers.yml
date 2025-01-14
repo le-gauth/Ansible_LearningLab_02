@@ -9,7 +9,7 @@
 
     - name: Copie des fichiers de configuration NGINX
       copy:
-        src: files/nginx.conf
+        src: nginx.conf
         dest: /etc/nginx/sites-available/default
 
     - name: Activer la configuration
@@ -20,7 +20,7 @@
 
     - name: Copie de la page web index.html
       template: >
-        src=templates/index.html.j2
+        src=index.html.j2
         dest=/usr/share/nginx/html/index.html
 
     - name: Redémarrage de NGINX pour appliquer la configuration
