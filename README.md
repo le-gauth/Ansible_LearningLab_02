@@ -32,15 +32,25 @@ end
 
  **<u>Arborescence finale :</u>**
 ./Ansible_LearningLab_02
+
 ├── ansible.cfg
+
 ├── files
+
 │   └── nginx.conf
+
 ├── inventory
+
 │   └── vagrant.ini
+
 ├── README.md
+
 ├── templates
+
 │   └── index.html.j2
+
 ├── Vagrantfile
+
 └── webservers.yml
 
 **Playbook webservers.yml**
