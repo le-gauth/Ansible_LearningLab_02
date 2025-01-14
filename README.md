@@ -30,7 +30,7 @@ end
 
 >Ce premier playbook permet d'installer et de configurer NGINX avec une simple page web en HTTP sur la VM
 
-> **<u>Arborescence finale :</u>**
+ **<u>Arborescence finale :</u>**
 ./Ansible_LearningLab_02
 ├── ansible.cfg
 ├── files
@@ -53,28 +53,28 @@ end
   become: true
   tasks:
     - name: Installation de NGINX
-	  package: 
-	    name: nginx
-	    update_cache: yes
+      package: 
+        name: nginx
+        update_cache: yes
 
-	- name: Copie des fichiers de configuration NGINX
-	  copy:
-	    src: files/nginx.conf
-		dest: /etc/nginx/sites-available/default
+    - name: Copie des fichiers de configuration NGINX
+      copy:
+        src: files/nginx.conf
+        dest: /etc/nginx/sites-available/default
 
-	- name: Activer la configuration
-	  file: >
-		dest=/etc/nginx/sites-enabled/default
-		src=/etc/nginx/sites-available/default
-		state=link
+    - name: Activer la configuration
+      file: >
+        dest=/etc/nginx/sites-enabled/default
+        src=/etc/nginx/sites-available/default
+        state=link
 
-	- name: Copie de la page web index.html
-	  template: >
-		src=templates/index.html.j2
-		dest=/usr/share/nginx/html/index.html
+    - name: Copie de la page web index.html
+      template: >
+        src=templates/index.html.j2
+        dest=/usr/share/nginx/html/index.html
 
-	- name: Redémarrage de NGINX pour appliquer la configuration
-	  service: name=nginx state=restarted
+    - name: Redémarrage de NGINX pour appliquer la configuration
+      service: name=nginx state=restarted
 ...
 ```
 
@@ -216,8 +216,8 @@ mondictionnaire:
 ```yaml
 - name: Ensure nginx is installed # Nom de la tâche
   package: # Module Ansible
-	name: nginx # Nom du package
-	update_cache: true # apt update
+    name: nginx # Nom du package
+    update_cache: true # apt update
 ```
 
 >  Le module package vérifie si le paquet spécifier est installé, si il ne l'est pas, le module l'installera.
