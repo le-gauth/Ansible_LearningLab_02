@@ -1,0 +1,78 @@
+---
+
+- name: Installation et configuration de NGINX
+  hosts: webservers
+  become: true
+
+  vars:
+    tls_dir: /etc/nginx/ssl/
+    key_file: nginx.key
+    cert_file: nginx.crt
+    conf_file: /etc/nginx/sites-available/default
+    server_name: localhost
+
+  handlers:
+    - name: Restart nginx
+      service:
+       name: nginx
+       state: restarted
+
+  tasks:
+    - name: Installation de NGINX
+      package: 
+        name: nginx
+        update_cache: yes
+
+    - name: Création du répertoire pour les certificats TLS
+      file:
+        path: "{{ tls_dir }}"
+        state: directory
+        mode: '0750'
+      notify: Restart nginx
+
+    - name: Copie des fichiers TLS
+      copy:
+        src: "{{ item }}"
+        dest: "{{ tls_dir }}"
+        mode: '0600'
+      loop:
+        - "{{ key_file }}"
+        - "{{ cert_file }}"
+      notify: Restart nginx
+
+
+    - name: Copie des fichiers de configuration NGINX
+      template:
+        src: nginx.conf.j2
+        dest: "{{ conf_file }}"
+        mode: '0644'
+      notify: Restart nginx
+
+    - name: Activer la configuration
+      file: >
+        dest=/etc/nginx/sites-enabled/default
+        src=/etc/nginx/sites-available/default
+        state=link
+
+    - name: Copie de la page web index.html
+      template: >
+        src=index.html.j2
+        dest=/usr/share/nginx/html/index.html
+
+    - name: Restart nginx
+      meta: flush_handlers
+
+    - name: "Test it! https://localhost:8443/index.html"
+      delegate_to: localhost
+      become: false
+      uri:
+        url: 'https://localhost:8443/index.html'
+        validate_certs: false
+        return_content: true
+      register: this
+      failed_when: this.status != 200
+      tags:
+        - test
+
+
+...
