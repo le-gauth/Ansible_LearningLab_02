@@ -1,18 +1,30 @@
-# -*- mode: ruby -*-
-# vi: set ft=ruby :
+VAGRANTFILE_API_VERSION = "2"
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  # Use the same key for each machine
+  config.ssh.insert_key = false
 
-Vagrant.configure("2") do |config|
-  config.vm.box = "ubuntu/focal64"
-  config.vm.hostname = "testserver"
-  config.vm.network "forwarded_port",  id: 'ssh', guest: 22, host: 2202, host_ip: "127.0.0.1",  auto_correct: false
-  config.vm.network "forwarded_port",  id: 'http', guest: 80, host: 8080, host_ip: "127.0.0.1"
-  config.vm.network "forwarded_port",  id: 'https', guest: 443, host: 8443, host_ip: "127.0.0.1"
+  config.vagrant.plugins = ["vagrant-hostmanager"]
 
-  if Vagrant.has_plugin?("vagrant-vbguest")
-    config.vbguest.auto_update = false
+  config.hostmanager.enabled = true
+  config.hostmanager.include_offline = true
+  config.hostmanager.manage_guest = true
+  config.hostmanager.manage_host = true
+  
+  config.vm.define "vagrant1" do |vagrant1|
+    vagrant1.vm.box = "ubuntu/focal64"
+    vagrant1.vm.network "forwarded_port", guest: 80, host: 8080
+    vagrant1.vm.network "forwarded_port", guest: 443, host: 8443
   end
 
-  config.vm.provider "virtualbox" do |virtualbox|
-    virtualbox.name = "ch03"
+  config.vm.define "vagrant2" do |vagrant2|
+    vagrant2.vm.box = "ubuntu/focal64"
+    vagrant2.vm.network "forwarded_port", guest: 80, host: 8081
+    vagrant2.vm.network "forwarded_port", guest: 443, host: 8444
+  end
+
+  config.vm.define "vagrant3" do |vagrant3|
+    vagrant3.vm.box = "ubuntu/focal64"
+    vagrant3.vm.network "forwarded_port", guest: 80, host: 8082
+    vagrant3.vm.network "forwarded_port", guest: 443, host: 8445
   end
 end
